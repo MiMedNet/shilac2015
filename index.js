@@ -11,6 +11,11 @@ app.get('/', function (req, res) {
   res.render("index");
 });
 
+app.get('/data', function (req, res) {
+ var data = require('./public/SHILAC.json');
+ res.send(data);
+});
+
 var server = app.listen(8080, function () {
   var host = server.address().address;
   var port = server.address().port;
