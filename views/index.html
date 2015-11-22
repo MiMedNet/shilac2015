@@ -59,13 +59,21 @@ function iteratee(value, key, list){
 	}
 	else 
 		ageDistribution[value["Range Age"]]++;
-	console.log(ageDistribution);
+}
+function plot(value, key, list){
+	d3.append("#paracord")x1
 }
 
  function getData()  {
    $.get('/data', {}, function(data){
-		_.each(data, iteratee); 	
+		_.each(data, iteratee);
+		_.each(ageDistribution, plot) 	
   });
+
+
+
+
+   
 
 }
 
@@ -161,10 +169,7 @@ function iteratee(value, key, list){
 	else 
 		ageDistribution[value["Range Age"]]++;
 }
-d3.selectAll("#paracord")
-      .data(ageDistribution)
-      .enter()
-      .append("circle");
+
 
 
 </script></body>
