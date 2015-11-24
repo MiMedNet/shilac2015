@@ -1,87 +1,379 @@
 <!DOCTYPE html>
+
+
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
-	<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
-	<!-- Optional theme -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
-	<!-- Latest compiled and minified JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
-	
-	<script src="nvd3/build/nv.d3.js"></script>
-	<script src="underscore/underscore.js"></script>
-	
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 
 
+<script src="/nvd3/build/nv.d3.js"></script>
 
-<meta charset="utf-8">
-<style>
+<script src="jquery/dist/jquery.js"></script>
 
-circle,
-path {
-  cursor: pointer;
-}
+<script src="underscore/underscore.js"></script>
 
-circle {
-  fill: none;
-  pointer-events: all;
-}
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
-</style>
-<body>
-<div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">Blue</a>
-    </div>
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="#">Drilldown</a></li>
-      </ul>
-    </div>
-  </div>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
-  <div id="filter"><div>
-  <svg id="paracord">
-  </svg>
+<script src="http://code.highcharts.com/maps/adapters/standalone-framework.js"></script>
+<script src="http://code.highcharts.com/maps/highmaps.js"></script>
+<script src="http://code.highcharts.com/maps/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/mapdata/countries/pr/pr-all-all.js"></script>
+
+<div id="container"></div>
 
 <script>
+
+	function male(){
+		console.log("bam");
+	}
+	function female(){
+		console.log("bam2");
+	}
+  function getData1()  {
+    $.get('/data', {}, function(data){
+      var diagnosis = {};
+        _.filter(data, iterate);
+        function iterate(value, key, list){
+          if(!diagnosis[value["ER Diag Description"]]) {
+            diagnosis[value["ER Diag Description"]] = 1;
+          }
+          else
+            diagnosis[value["ER Diag Description"]]++;
+        }
+      _.filter(diagnosis, iteratetwo);
+      function iteratetwo(value, key, list) {
+        document.getElementById('test').innerHTML += '<li onclick="getDiagnosis($(this).text())" ><a href="#">'+key+'</a></li>';
+      }
+   });
+}
+function getDiagnosis(value) {
+  var dgn = value;
+  console.log(dgn);
+
+  $( "#femaletxt" ).remove();
+  $( "#maletxt" ).remove();
+  d3.selectAll(".bolitas").attr("class", "bolitas").attr("visibility", "hidden");
+ var data = _.filter(dgn, function(d){d["ER Diag Description"] == value});
+	_.each(data, iteratee);
+	_.each(drugs, plotDrugs);
+	_.each(erVisits, plotEr);
+	_.each(ageDistribution, plotAge);
+	_.each(ha, plotHa);
+d3.select("#female").append("text").attr("id","femaletxt").text(female).style("font-size", "50px").style("text-decoration", "none");
+d3.select("#male").append("text").text(male).attr("id","maletxt").style("font-size", "50px").style("text-decoration", "none");
+}	
+  </script></head>
+<body>
+<div class="container-fluid">
+
+  <div class="dropdown" style="padding-left: 100px;float: left;">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Diagnosis
+    <span class="caret"></span></button>
+    <ul id = "test" class="dropdown-menu">
+      <script>
+      	getData1();
+      </script>
+    </ul>
+  </div>
+  
+  <svg id="paracord"style="padding-left: 50px;float: left;"></svg>
+  <div id="gender" style="padding-left: 100px;float: left;">
+  	<a onclick="male()" id="male"><i class="fa fa-male fa-5x ">
+  	</i></a><br>
+  	<a onclick="female()" id="female"><i class="fa fa-female fa-5x">
+  	</i></a>
+  </div>	
+  <div id="filter"><div>
+  
+
+<script>
+var totalDrugs = 0;
 var ageDistribution = {};
+var drugs = {};
+var erVisits = {};
+var erVisitsTotal = 0;
+var ha = {};
+var haTotal = 0;
+var patientsCounts = 0;
+var female = 0;
+var male = 0;
+var genderAgeRange = {};
+var theData;
+
 function iteratee(value, key, list){
 	if(!ageDistribution[value["Range Age"]]){
 		ageDistribution[value["Range Age"]] = 1;
+		drugs[value["Range Age"]] =  parseInt(value["# Drugs"]);
+		erVisits[value["Range Age"]] = parseInt(value["# ER Visits"]);
+		ha[value["Range Age"]] = parseInt(value["# Hospital Admissoins"]);
 	}
-	else 
+	else {
 		ageDistribution[value["Range Age"]]++;
+		drugs[value["Range Age"]] +=  parseInt(value["# Drugs"]);
+		erVisits[value["Range Age"]] += parseInt(value["# ER Visits"]);
+		ha[value["Range Age"]] += parseInt(value["# Hospital Admissoins"]);
+	}
+	
+	totalDrugs +=  parseInt(value["# Drugs"]);
+	erVisitsTotal += parseInt(value["# ER Visits"]);
+	haTotal += parseInt(value["# Hospital Admissoins"]);
+	patientsCounts++;
+	if(value["Gender"] == "Female") {
+		female++;
+	}
+	if(value["Gender"] == "Male") {
+		male++;
+	}
+
 }
-function plot(value, key, list){
-	d3.append("#paracord")x1
+function plotAge(value, key, list){
+
+	d3.selectAll("#paracord")
+		.append("circle")
+		.attr("id", "age"+key)
+		.attr("class", "bolitas")
+		.attr("width", 200)
+		.attr("height", 200)
+		.attr("cx", 300)
+		.attr("cy", Math.abs(1900/patientsCounts)*value)
+		.attr("r", 10)
+		.style("fill", "blue")
+		.style("fill-opacity", "0.5")
+		.on("mouseover", function(d) {
+			d3.select("#age"+key).style("fill", "red");
+			d3.select("#drugs"+key).style("fill", "red");
+			d3.select("#ha"+key).style("fill", "red");
+			d3.select("#er"+key).style("fill", "red");
+			d3.select("#ageLine"+key).style("stroke", "red");
+			d3.select("#erLine"+key).style("stroke", "red");
+			d3.select("#haLine"+key).style("stroke", "red");
+			d3.select("#text"+key).attr("visibility", "visible");
+
+
+		})                  
+		.on("mouseout", function(d) {
+			d3.select("#age"+key).style("fill", "blue");
+			d3.select("#drugs"+key).style("fill", "blue");
+			d3.select("#ha"+key).style("fill", "blue");
+			d3.select("#er"+key).style("fill", "blue");
+			d3.select("#ageLine"+key).style("stroke", "gray");
+			d3.select("#erLine"+key).style("stroke", "gray");
+			d3.select("#haLine"+key).style("stroke", "gray");
+			d3.select("#text"+key).attr("visibility", "hidden");
+		});
+			
+		if(d3.select("#drugs"+key)[0][0]){
+			d3.selectAll("#paracord")
+				.append("line")
+				.attr("id", "ageLine"+key)
+				.attr("x1", 300)
+				.attr("x2", function(){
+					if(d3.select("#drugs"+key)[0][0])
+						return d3.select("#drugs"+key)[0][0].cx.animVal.value;
+				})
+				.attr("y1", Math.abs(1900/patientsCounts)*value)
+				.attr("y2", function(){
+					if(d3.select("#drugs"+key)[0][0])
+						return d3.select("#drugs"+key)[0][0].cy.animVal.value;
+				})
+				.attr("stroke-width", 1)
+				.attr("stroke", "gray");
+			}
+		if(d3.select("#er"+key)[0][0]){
+			d3.selectAll("#paracord")
+				.append("line")
+				.attr("id", "erLine"+key)
+				.attr("class", "bolitas")
+				.attr("x1", 300)
+				.attr("x2", function(){
+					if(d3.select("#er"+key)[0][0])
+						return d3.select("#er"+key)[0][0].cx.animVal.value;
+				})
+				.attr("y1", Math.abs(1900/patientsCounts)*value)
+				.attr("y2", function(){
+					if(d3.select("#er"+key)[0][0])
+						return d3.select("#er"+key)[0][0].cy.animVal.value;
+				})
+				.attr("stroke-width", 1)
+				.attr("stroke", "gray");
+			}
+		d3.select("#paracord")
+			.append("text")
+			.attr("id","text"+key)
+			.text(key)
+			.attr("x", 715)
+			.attr("y", 295)
+			.attr("font-size", 30)
+			.attr("fill", "gray")
+			.attr("visibility", "hidden");	
 }
 
+function plotDrugs(value, key, list){
+	d3.selectAll("#paracord")
+		.append("circle")
+		.attr("id", "drugs"+key)
+		.attr("width", 100)
+		.attr("class", "bolitas")
+		.attr("height", 100)
+		.attr("cx", 100)
+		.attr("cy", (1600/totalDrugs)*value)
+		.attr("r", 10)
+		.style("fill", "blue")
+		.style("fill-opacity", "0.5")
+		.on("mouseover", function(d) {
+			d3.select("#age"+key).style("fill", "red");
+			d3.select("#drugs"+key).style("fill", "red");
+			d3.select("#ha"+key).style("fill", "red");
+			d3.select("#er"+key).style("fill", "red");
+			d3.select("#ageLine"+key).style("stroke", "red");
+			d3.select("#erLine"+key).style("stroke", "red");
+			d3.select("#haLine"+key).style("stroke", "red");
+			d3.select("#text"+key).attr("visibility", "visible");
+			d3.select("#femaletxt").text(
+				function(){
+				return (_.countBy(theData, function(d) { 
+					if(d["Range Age"] == key && d["Gender"] == "Female") return true; 
+				})['true'])}
+				);
+			d3.select("#maletxt").text(
+				function(){
+				return (_.countBy(theData, function(d) { 
+					if(d["Range Age"] == key && d["Gender"] == "Male") return true; 
+				})['true'])}
+				);
+	
+		})                  
+		.on("mouseout", function(d) {
+			d3.select("#age"+key).style("fill", "blue");
+			d3.select("#drugs"+key).style("fill", "blue");
+			d3.select("#ha"+key).style("fill", "blue");
+			d3.select("#er"+key).style("fill", "blue");
+			d3.select("#ageLine"+key).style("stroke", "gray");
+			d3.select("#erLine"+key).style("stroke", "gray");
+			d3.select("#haLine"+key).style("stroke", "gray");
+			d3.select("#text"+key).attr("visibility", "hidden");
+		});
+}
+function plotEr (value, key, list){
+	d3.selectAll("#paracord")
+		.append("circle")
+		.attr("id", "er"+key)
+		.attr("width", 100)
+		.attr("class", "bolitas")
+		.attr("height", 100)
+		.attr("cx", 500)
+				.attr("cy", (1600/erVisitsTotal)*value)
+		.attr("r", 10)
+		.style("fill", "blue")
+		.style("fill-opacity", "0.5").on("mouseover", function(d) {
+			d3.select("#age"+key).style("fill", "red");
+			d3.select("#drugs"+key).style("fill", "red");
+			d3.select("#ha"+key).style("fill", "red");
+			d3.select("#er"+key).style("fill", "red");
+			d3.select("#ageLine"+key).style("stroke", "red");
+			d3.select("#erLine"+key).style("stroke", "red");
+			d3.select("#haLine"+key).style("stroke", "red");
+			d3.select("#text"+key).attr("visibility", "visible");
+
+		})                  
+		.on("mouseout", function(d) {
+			d3.select("#age"+key).style("fill", "blue");
+			d3.select("#drugs"+key).style("fill", "blue");
+			d3.select("#ha"+key).style("fill", "blue");
+			d3.select("#er"+key).style("fill", "blue");
+			d3.select("#erLine"+key).style("stroke", "gray");
+			d3.select("#ageLine"+key).style("stroke", "gray");
+			d3.select("#haLine"+key).style("stroke", "gray");
+			d3.select("#text"+key).attr("visibility", "hidden");
+		});
+}
+function plotHa (value, key, list){
+	d3.selectAll("#paracord")
+		.append("circle")
+		.attr("id", "ha"+key)
+		.attr("width", 100)
+		.attr("height", 100)
+		.attr("cx", 700)
+		.attr("class", "bolitas")
+		.attr("cy", (1000/patientsCounts)*value)
+		.attr("r", 10)
+		.style("fill", "blue")
+		.style("fill-opacity", "0.5")
+		.on("mouseover", function(d) {
+			d3.select("#age"+key).style("fill", "red");
+			d3.select("#drugs"+key).style("fill", "red");
+			d3.select("#ha"+key).style("fill", "red");
+			d3.select("#er"+key).style("fill", "red");
+			d3.select("#ageLine"+key).style("stroke", "red");
+			d3.select("#erLine"+key).style("stroke", "red");
+			d3.select("#haLine"+key).style("stroke", "red");
+			d3.select("#text"+key).attr("visibility", "visible");
+
+
+		})                  
+		.on("mouseout", function(d) {
+			d3.select("#age"+key).style("fill", "blue");
+			d3.select("#drugs"+key).style("fill", "blue");
+			d3.select("#ha"+key).style("fill", "blue");
+			d3.select("#er"+key).style("fill", "blue");
+			d3.select("#erLine"+key).style("stroke", "gray");
+			d3.select("#ageLine"+key).style("stroke", "gray");
+			d3.select("#haLine"+key).style("stroke", "gray");
+			d3.select("#text"+key).attr("visibility", "hidden");
+		});
+		if(d3.select("#er"+key)[0][0]){
+			d3.selectAll("#paracord")
+				.append("line")
+				.attr("id", "haLine"+key)
+				.attr("x2", 700)
+				.attr("x1", function(){
+					if(d3.select("#er"+key)[0][0])
+						return d3.select("#er"+key)[0][0].cx.animVal.value;
+				})
+				.attr("y2", (1000/patientsCounts)*value)
+				.attr("y1", function(){
+					if(d3.select("#er"+key)[0][0])
+						return d3.select("#er"+key)[0][0].cy.animVal.value;
+				})
+				.attr("stroke-width", 1)
+				.attr("stroke", "gray");
+			}
+}
  function getData()  {
    $.get('/data', {}, function(data){
+
 		_.each(data, iteratee);
-		_.each(ageDistribution, plot) 	
+		_.each(drugs, plotDrugs);
+		_.each(erVisits, plotEr);
+		_.each(ageDistribution, plotAge);
+		_.each(ha, plotHa);
+		theData = data;
+		d3.select("#female").append("text").attr("id","femaletxt").text(female).style("font-size", "50px").style("text-decoration", "none");
+		d3.select("#male").append("text").text(male).attr("id","maletxt").style("font-size", "50px").style("text-decoration", "none");
   });
-
-
-
-
-   
 
 }
 
 getData();
 
 var paracord = d3.select("#paracord")
-	.attr("width", 700)
-	.attr("height", 700)
+	.attr("width", 840)
+	.attr("height", 330)
 	.append("line")
 	.attr("class", "line")
 	.attr("x1", 100)
@@ -113,7 +405,7 @@ d3.select("#paracord").append("line")
 	.attr("x2", 300)
 	.attr("y1", 0)
 	.attr("y2", 300)
-	.attr("stroke-width", 2)
+	.attr("stroke-width", 4)
 	.attr("stroke", "gray");
 d3.select("#paracord").append("line")
 	.attr("class", "line")
@@ -121,7 +413,7 @@ d3.select("#paracord").append("line")
 	.attr("x2", 290)
 	.attr("y1", .5)
 	.attr("y2", .5)
-	.attr("stroke-width", 2)
+	.attr("stroke-width", 4)
 	.attr("stroke", "gray");
 d3.select("#paracord").append("line")
 	.attr("class", "line")
@@ -129,7 +421,7 @@ d3.select("#paracord").append("line")
 	.attr("x2", 290)
 	.attr("y1", 300)
 	.attr("y2", 300)
-	.attr("stroke-width", 2)
+	.attr("stroke-width", 4)
 	.attr("stroke", "gray");
 d3.select("#paracord").append("line")
 	.attr("class", "line")
@@ -155,21 +447,415 @@ d3.select("#paracord").append("line")
 	.attr("y2", 300)
 	.attr("stroke-width", 2)
 	.attr("stroke", "gray");
-d3.selectAll("line")
-	.on("mouseover", function(d) {
-		d3.select(this).style("stroke", "red");
-	})                  
-	.on("mouseout", function(d) {
-		d3.select(this).style("stroke", "#fff8ee");
-	});
-function iteratee(value, key, list){
-	if(!ageDistribution[value["Range Age"]]){
-		ageDistribution[value["Range Age"]] = 1;
-	}
-	else 
-		ageDistribution[value["Range Age"]]++;
-}
-
+d3.select("#paracord").append("line")
+	.attr("class", "line")
+	.attr("x1", 700)
+	.attr("x2", 700)
+	.attr("y1", 0)
+	.attr("y2", 300)
+	.attr("stroke-width", 2)
+	.attr("stroke", "gray");
+d3.select("#paracord").append("line")
+	.attr("class", "line")
+	.attr("x1", 710)
+	.attr("x2", 690)
+	.attr("y1", .5)
+	.attr("y2", .5)
+	.attr("stroke-width", 2)
+	.attr("stroke", "gray");
+d3.select("#paracord").append("line")
+	.attr("class", "line")
+	.attr("x1", 710)
+	.attr("x2", 690)
+	.attr("y1", 300)
+	.attr("y2", 300)
+	.attr("stroke-width", 2)
+	.attr("stroke", "gray");
+d3.select("#paracord")
+	.append("text")
+	.text("AGE")
+	.attr("x", 290)
+	.attr("y", 315)
+	.attr("font-size", 10)
+	.attr("fill", "RED");
+d3.select("#paracord")
+	.append("text")
+	.text("DRUGS")
+	.attr("x", 90)
+	.attr("y", 315)
+	.attr("font-size", 10)
+	.attr("fill", "gray");
+d3.select("#paracord")
+	.append("text")
+	.text("ER")
+	.attr("x", 490)
+	.attr("y", 315)
+	.attr("font-size", 10)
+	.attr("fill", "gray");
+d3.select("#paracord")
+	.append("text")
+	.text("HA")
+	.attr("x", 690)
+	.attr("y", 315)
+	.attr("font-size", 10)
+	.attr("fill", "gray");
 
 
 </script></body>
+
+<script>
+window.onload = function () {
+    // Prepare demo data
+    var data = [
+{
+"hc-key": "pr-3614-115",
+"value": 0
+},
+{
+"hc-key": "pr-3614-095",
+"value": 1
+},
+{
+"hc-key": "pr-3614-017",
+"value": 2
+},
+{
+"hc-key": "pr-3614-054",
+"value": 3
+},
+{
+"hc-key": "pr-3614-027",
+"value": 4
+},
+{
+"hc-key": "pr-3614-067",
+"value": 5
+},
+{
+"hc-key": "pr-3614-079",
+"value": 6
+},
+{
+"hc-key": "pr-3614-121",
+"value": 7
+},
+{
+"hc-key": "pr-3614-081",
+"value": 8
+},
+{
+"hc-key": "pr-3614-153",
+"value": 9
+},
+{
+"hc-key": "pr-3614-093",
+"value": 10
+},
+{
+"hc-key": "pr-3614-001",
+"value": 11
+},
+{
+"hc-key": "pr-3614-113",
+"value": 12
+},
+{
+"hc-key": "pr-3614-137",
+"value": 13
+},
+{
+"hc-key": "pr-3614-021",
+"value": 14
+},
+{
+"hc-key": "pr-3614-097",
+"value": 15
+},
+{
+"hc-key": "pr-3614-023",
+"value": 16
+},
+{
+"hc-key": "pr-3614-019",
+"value": 17
+},
+{
+"hc-key": "pr-3614-047",
+"value": 18
+},
+{
+"hc-key": "pr-3614-073",
+"value": 19
+},
+{
+"hc-key": "pr-3614-107",
+"value": 20
+},
+{
+"hc-key": "pr-3614-085",
+"value": 21
+},
+{
+"hc-key": "pr-3614-129",
+"value": 22
+},
+{
+"hc-key": "pr-3614-151",
+"value": 23
+},
+{
+"hc-key": "pr-3614-109",
+"value": 24
+},
+{
+"hc-key": "pr-3614-003",
+"value": 25
+},
+{
+"hc-key": "pr-3614-011",
+"value": 26
+},
+{
+"hc-key": "pr-3614-009",
+"value": 27
+},
+{
+"hc-key": "pr-3614-041",
+"value": 28
+},
+{
+"hc-key": "pr-3614-135",
+"value": 29
+},
+{
+"hc-key": "pr-3614-143",
+"value": 30
+},
+{
+"hc-key": "pr-3614-141",
+"value": 31
+},
+{
+"hc-key": "pr-3614-039",
+"value": 32
+},
+{
+"hc-key": "pr-3614-013",
+"value": 33
+},
+{
+"hc-key": "pr-3614-061",
+"value": 34
+},
+{
+"hc-key": "pr-3614-035",
+"value": 35
+},
+{
+"hc-key": "pr-3614-015",
+"value": 36
+},
+{
+"hc-key": "pr-3614-125",
+"value": 37
+},
+{
+"hc-key": "pr-3614-031",
+"value": 38
+},
+{
+"hc-key": "pr-3614-063",
+"value": 39
+},
+{
+"hc-key": "pr-3614-139",
+"value": 40
+},
+{
+"hc-key": "pr-3614-025",
+"value": 41
+},
+{
+"hc-key": "pr-3614-119",
+"value": 42
+},
+{
+"hc-key": "pr-3614-075",
+"value": 43
+},
+{
+"hc-key": "pr-3614-045",
+"value": 44
+},
+{
+"hc-key": "pr-3614-127",
+"value": 45
+},
+{
+"hc-key": "pr-3614-007",
+"value": 46
+},
+{
+"hc-key": "pr-3614-033",
+"value": 47
+},
+{
+"hc-key": "pr-3614-091",
+"value": 48
+},
+{
+"hc-key": "pr-3614-101",
+"value": 49
+},
+{
+"hc-key": "pr-3614-059",
+"value": 50
+},
+{
+"hc-key": "pr-3614-055",
+"value": 51
+},
+{
+"hc-key": "pr-3614-131",
+"value": 52
+},
+{
+"hc-key": "pr-3614-037",
+"value": 53
+},
+{
+"hc-key": "pr-3614-089",
+"value": 54
+},
+{
+"hc-key": "pr-3614-053",
+"value": 55
+},
+{
+"hc-key": "pr-3614-049",
+"value": 56
+},
+{
+"hc-key": "pr-3614-051",
+"value": 57
+},
+{
+"hc-key": "pr-3614-133",
+"value": 58
+},
+{
+"hc-key": "pr-3614-123",
+"value": 59
+},
+{
+"hc-key": "pr-3614-005",
+"value": 60
+},
+{
+"hc-key": "pr-3614-111",
+"value": 61
+},
+{
+"hc-key": "pr-3614-117",
+"value": 62
+},
+{
+"hc-key": "pr-3614-145",
+"value": 63
+},
+{
+"hc-key": "pr-3614-069",
+"value": 64
+},
+{
+"hc-key": "pr-3614-147",
+"value": 65
+},
+{
+"hc-key": "pr-3614-087",
+"value": 66
+},
+{
+"hc-key": "pr-3614-065",
+"value": 67
+},
+{
+"hc-key": "pr-3614-057",
+"value": 68
+},
+{
+"hc-key": "pr-3614-071",
+"value": 69
+},
+{
+"hc-key": "pr-3614-099",
+"value": 70
+},
+{
+"hc-key": "pr-3614-083",
+"value": 71
+},
+{
+"hc-key": "pr-3614-077",
+"value": 72
+},
+{
+"hc-key": "pr-3614-029",
+"value": 73
+},
+{
+"hc-key": "pr-3614-103",
+"value": 74
+},
+{
+"hc-key": "pr-3614-043",
+"value": 75
+},
+{
+"hc-key": "pr-3614-105",
+"value": 76
+},
+{
+"hc-key": "pr-3614-149",
+"value": 77
+}
+];
+    // Initiate the chart
+    var chart = new Highcharts.Map({
+        
+        chart: {
+            renderTo: 'container'
+        },
+        title: {
+            text: 'Highmaps basic demo'
+        },
+        subtitle: {
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/pr/pr-all-all.js">Puerto Rico</a>'
+        },
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
+        colorAxis: {
+            min: 0
+        },
+        series: [{
+            data: data,
+            mapData: Highcharts.maps['countries/pr/pr-all-all'],
+            joinBy: 'hc-key',
+            name: 'Random data',
+            states: {
+                hover: {
+                    color: '#BADA55'
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }]
+    });
+};
+</script>
